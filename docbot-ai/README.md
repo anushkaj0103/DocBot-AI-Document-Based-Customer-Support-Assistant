@@ -144,6 +144,52 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 
 ---
 
+## Sample Questions
+
+The default knowledge base is the **Nexora Technologies Employee Handbook (2024)**. Try these in the chat UI to see how DocBot answers from the document.
+
+### Leave and time off
+
+- What is Nexora's PTO policy for IC1–IC3 employees?
+- How many weeks of paid parental leave do employees get?
+- How many sick days are employees entitled to per year?
+- When am I eligible for a sabbatical?
+
+### Remote work and hybrid policy
+
+- How many days per week are hybrid employees expected in the office?
+- What are Nexora's core collaboration hours?
+- Can I work from another country for more than two weeks?
+
+### Benefits and perks
+
+- What mental health support does Nexora offer?
+- How much is the annual learning and development budget?
+- What is the home office stipend for remote employees?
+- Does Nexora offer a 401(k) match?
+
+### Compensation and employment
+
+- When does Nexora conduct its annual compensation review?
+- How long is the probationary period for new employees?
+- What happens during the Nexora Start onboarding programme?
+
+### Performance and culture
+
+- What are Nexora's five core values?
+- How often are formal performance reviews conducted?
+- What rating scale does Nexora use in reviews?
+
+### Out-of-scope (should refuse)
+
+These topics are **not** in the handbook — DocBot should reply that it could not find an answer:
+
+- What is the stock price of Nexora?
+- Who won the World Cup in 2022?
+- What is the weather in San Francisco today?
+
+---
+
 ## Environment Variables
 
 ### Server (`server/.env`)
