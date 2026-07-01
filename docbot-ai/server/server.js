@@ -26,6 +26,21 @@ app.get('/api/health', (req, res) => {
 app.use('/api/chat', chatRouter);
 app.use(errorHandler);
 
-app.listen(port, () => {
+const server = app.listen(port);
+
+server.on('listening', () => {
   console.log(`[server] Listening on port ${port}`);
+  console.log('[server] Press Ctrl+C to stop');
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(
+      `[server] Port ${port} is already in use. Another backend is already running.`
+    );
+    console.error('[server] Stop the other process first, or use a different PORT in .env');
+  } else {
+    console.error(`[server] Failed to start: ${err.message}`);
+  }
+  process.exit(1);
 });

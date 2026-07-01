@@ -1,9 +1,14 @@
 function LoadingIndicator() {
   return (
-    <div className="message message--assistant loading">
-      <span className="dot"></span>
-      <span className="dot"></span>
-      <span className="dot"></span>
+    <div
+      className="message message--assistant loading"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading response"
+    >
+      <span className="dot" aria-hidden="true"></span>
+      <span className="dot" aria-hidden="true"></span>
+      <span className="dot" aria-hidden="true"></span>
     </div>
   )
 }

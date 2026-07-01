@@ -10,7 +10,7 @@ function ChatWindow({ messages, isLoading }) {
   }, [messages.length, isLoading])
 
   return (
-    <div className="chat-window">
+    <div className="chat-window" aria-busy={isLoading}>
       <div className="chat-window__content">
         {messages.map((message) => (
           <Message

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import ChatWindow from './components/ChatWindow'
 import ErrorBanner from './components/ErrorBanner'
 import InputBar from './components/InputBar'
+import { USER_ERROR_MESSAGES } from './constants/errorMessages'
 import { sendQuestion } from './services/api'
 import './App.css'
 
@@ -12,7 +13,7 @@ function App() {
 
   async function handleSend(questionText) {
     if (questionText.trim() === '') {
-      setError('Please enter a question.')
+      setError(USER_ERROR_MESSAGES.EMPTY_QUESTION)
       return
     }
 

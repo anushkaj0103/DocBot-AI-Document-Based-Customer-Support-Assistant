@@ -1,3 +1,8 @@
+import {
+  USER_ERROR_MESSAGES,
+  getUserErrorMessage,
+} from '../constants/errorMessages.js'
+
 export async function sendQuestion(question) {
   try {
     const response = await fetch(
@@ -12,17 +17,30 @@ export async function sendQuestion(question) {
     )
 
     if (!response.ok) {
-      throw new Error('Something went wrong. Please try again.')
+      let message = USER_ERROR_MESSAGES.GENERIC_ERROR
+
+      try {
+        const errorBody = await response.json()
+        if (errorBody?.error?.code) {
+          message = getUserErrorMessage(errorBody.error.code)
+        }
+      } catch {
+        // Keep the default message if the error body is not JSON.
+      }
+
+      throw new Error(message)
     }
 
     return await response.json()
   } catch (err) {
-    if (err.message === 'Something went wrong. Please try again.') {
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      throw new Error(USER_ERROR_MESSAGES.NETWORK_ERROR)
+    }
+
+    if (err instanceof Error && err.message) {
       throw err
     }
 
-    throw new Error(
-      'Could not connect to the server. Please check your connection.'
-    )
+    throw new Error(USER_ERROR_MESSAGES.NETWORK_ERROR)
   }
 }

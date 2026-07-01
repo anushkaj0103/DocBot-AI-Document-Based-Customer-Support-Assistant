@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { getUserErrorMessage } from '../lib/errorMessages.js';
 import { pdfText } from '../lib/pdfLoader.js';
 import { buildMessages } from '../lib/promptBuilder.js';
 import { getAnswer } from '../lib/geminiClient.js';
@@ -18,7 +19,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({
         error: {
           code: 'MISSING_QUESTION',
-          message: 'Please enter a question before sending.',
+          message: getUserErrorMessage('MISSING_QUESTION'),
         },
       });
     }
@@ -27,7 +28,7 @@ router.post('/', async (req, res, next) => {
       return res.status(400).json({
         error: {
           code: 'QUESTION_TOO_LONG',
-          message: 'Your question is too long. Please keep it under 500 characters.',
+          message: getUserErrorMessage('QUESTION_TOO_LONG'),
         },
       });
     }

@@ -18,7 +18,7 @@ function InputBar({ onSend, isLoading }) {
   }
 
   return (
-    <form className="input-bar" onSubmit={handleSubmit}>
+    <form className="input-bar" onSubmit={handleSubmit} aria-busy={isLoading}>
       <input
         type="text"
         value={value}
@@ -26,8 +26,9 @@ function InputBar({ onSend, isLoading }) {
         onKeyDown={handleKeyDown}
         placeholder="Ask a question about the document..."
         disabled={isLoading}
+        aria-label="Your question"
       />
-      <button type="submit" disabled={isLoading}>
+      <button type="submit" disabled={isLoading} aria-label="Send question">
         Send
       </button>
     </form>

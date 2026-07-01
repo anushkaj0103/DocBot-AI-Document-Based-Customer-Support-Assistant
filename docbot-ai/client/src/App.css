@@ -7,21 +7,32 @@
   --color-text-muted: #64748b;
   --color-error: #ef4444;
   --color-border: #2a3040;
+  --color-overlay-error: rgba(239, 68, 68, 0.12);
+  --color-border-error: rgba(239, 68, 68, 0.35);
+  --color-button-text: #e2e8f0;
   --radius: 12px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --touch-target: 44px;
 }
 
 .app {
-  min-height: 100vh;
+  height: 100dvh;
+  max-width: 100vw;
   display: flex;
   flex-direction: column;
   background: var(--color-bg);
   color: var(--color-text);
   overflow: hidden;
+  font-family: var(--font);
 }
 
 .app-header {
+  height: 72px;
   flex: 0 0 auto;
-  padding: 1.25rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
   border-bottom: 1px solid var(--color-border);
   text-align: center;
   background: var(--color-surface);
@@ -29,17 +40,21 @@
 
 .app-header h1 {
   margin: 0;
-  font-size: 1.75rem;
+  font-size: 1.5rem;
 }
 
 .chat-window {
   flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding: 1rem;
+  overflow-x: hidden;
+  padding: 0.75rem;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chat-window__content {
-  max-width: 960px;
+  width: 100%;
+  max-width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -47,10 +62,11 @@
 }
 
 .message {
-  max-width: min(85%, 720px);
-  padding: 0.875rem 1rem;
+  max-width: 75%;
+  padding: 12px 16px;
   border-radius: var(--radius);
   line-height: 1.5;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 
@@ -92,39 +108,48 @@
 }
 
 .error-banner {
-  margin: 0 1rem 1rem;
+  margin: 0 0.75rem 0.75rem;
   padding: 0.75rem 1rem;
-  border: 1px solid rgba(239, 68, 68, 0.35);
+  border: 1px solid var(--color-border-error);
   border-radius: var(--radius);
-  background: rgba(239, 68, 68, 0.12);
+  background: var(--color-overlay-error);
   color: var(--color-text);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+}
+
+.error-banner span {
+  line-height: 1.4;
 }
 
 .error-banner button {
   border: 0;
-  border-radius: 10px;
-  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  min-height: var(--touch-target);
   background: var(--color-error);
-  color: white;
+  color: var(--color-button-text);
   cursor: pointer;
+  width: 100%;
 }
 
 .input-bar {
   flex: 0 0 auto;
   display: flex;
+  flex-direction: column;
   gap: 0.75rem;
-  padding: 1rem;
+  padding: 0.75rem;
   border-top: 1px solid var(--color-border);
   background: var(--color-surface);
 }
 
 .input-bar input {
   flex: 1;
+  width: 100%;
   min-width: 0;
+  min-height: var(--touch-target);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   padding: 0.85rem 1rem;
@@ -140,9 +165,11 @@
   border: 0;
   border-radius: var(--radius);
   padding: 0.85rem 1.25rem;
+  min-height: var(--touch-target);
   background: var(--color-user-bubble);
-  color: white;
+  color: var(--color-button-text);
   cursor: pointer;
+  width: 100%;
 }
 
 .input-bar input:disabled,
@@ -165,20 +192,37 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (min-width: 640px) {
   .app-header h1 {
-    font-size: 1.4rem;
+    font-size: 1.75rem;
   }
 
   .chat-window {
-    padding: 0.75rem;
+    padding: 1rem;
   }
 
-  .message {
-    max-width: 92%;
+  .chat-window__content {
+    max-width: 720px;
+  }
+
+  .error-banner {
+    flex-direction: row;
+    align-items: center;
+    margin: 0 1rem 1rem;
+  }
+
+  .error-banner button {
+    width: auto;
+    flex-shrink: 0;
   }
 
   .input-bar {
-    padding: 0.75rem;
+    flex-direction: row;
+    align-items: center;
+    padding: 1rem;
+  }
+
+  .input-bar button {
+    width: auto;
   }
 }

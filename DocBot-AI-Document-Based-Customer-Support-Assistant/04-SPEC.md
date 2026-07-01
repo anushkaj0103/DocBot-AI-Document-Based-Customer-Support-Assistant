@@ -207,3 +207,126 @@ VITE_API_BASE_URL=http://localhost:3001
 - Markdown rendering in chat bubbles
 - Streaming responses — standard request/response only
 - Admin interface of any kind
+
+---
+
+## Change Request — Sprint 2 (Phase 6)
+
+Stakeholder request: improve error clarity, mobile usability, and loading feedback across the chat experience.
+
+### Impact Summary
+
+| Area | Affected? | What changes |
+|---|---|---|
+| **Architecture** | No structural change | Existing frontend/backend split is sufficient. Errors continue to flow: `api.js` → `App.jsx` → `ErrorBanner` (client) and `chat.js` → `errorHandler` (server). |
+| **Components** | Minor updates | `ErrorBanner`, `api.js`, `errorHandler.js`, `ChatWindow`, `InputBar`, `LoadingIndicator`, `App.css` |
+| **New components** | None | No new files required |
+| **Backend routes** | Audit only | `POST /api/chat` validation messages already plain English; confirm `errorHandler` covers all thrown errors |
+| **Implementation plan** | Phase 6 added | Three polish tasks after core MVP (Phases 1–5) |
+
+### Task 1: Audit all error messages — replace technical strings with plain English
+
+**Goal:** Every user-visible error must be clear, actionable, and free of jargon (no HTTP codes, stack traces, API provider names, or file paths).
+
+**Error message catalog (target state):**
+
+| Source | Code (internal) | User-facing message |
+|---|---|---|
+| Client validation | `EMPTY_QUESTION` | Please enter a question. |
+| Server validation | `MISSING_QUESTION` | Please enter a question before sending. |
+| Server validation | `QUESTION_TOO_LONG` | Your question is too long. Please keep it under 500 characters. |
+| Server startup | `PDF_LOAD_ERROR` | The document is not available right now. Please try again later. |
+| AI provider | `AI_ERROR` | The assistant could not generate a response right now. Please try again. |
+| Network failure | — | Could not connect to the server. Please check your connection. |
+| Unknown server error | `INTERNAL_SERVER_ERROR` | Something went wrong. Please try again later. |
+
+**Files to audit:**
+
+- `client/src/App.jsx` — client-side validation message
+- `client/src/services/api.js` — network and non-2xx handling
+- `server/routes/chat.js` — 400 validation responses
+- `server/middleware/errorHandler.js` — all thrown error codes
+- `server/lib/geminiClient.js` (Groq client) — ensure thrown errors use `AI_ERROR` code only; never pass provider details to the client
+
+**Acceptance criteria:**
+
+- No user-facing string contains HTTP status codes, "Groq", "Gemini", "API", stack traces, or file paths
+- Error `code` field remains in JSON for debugging but is never shown directly in the UI
+- `ErrorBanner` displays only the `message` string
+
+**Status:** Done — centralized in `server/lib/errorMessages.js` and `client/src/constants/errorMessages.js`. Provider details logged server-side only.
+
+---
+
+### Task 2: Mobile CSS for ChatWindow and InputBar at 375px
+
+**Goal:** Chat is fully usable on a 375px-wide viewport with no horizontal scroll.
+
+**Target layout at 375px:**
+
+- `ChatWindow`: scrollable message area, bubbles max 75% width, text wraps without overflow
+- `InputBar`: input and Send button stack full-width (column layout)
+- `ErrorBanner`: readable without clipping; dismiss button remains tappable
+- Touch targets: input and button padding ≥ 44px effective tap height
+
+**Files to update:**
+
+- `client/src/App.css` — mobile-first base styles; desktop breakpoint at `min-width: 640px`
+
+**Acceptance criteria:**
+
+- No horizontal scrollbar at 375px width
+- Input and Send are full width on mobile
+- Messages remain readable and scrollable
+- InputBar stays pinned to bottom of viewport
+
+**Status:** Done — mobile-first layout with 44px touch targets, flex scroll fix, and 375px-safe padding/overflow rules in `App.css`.
+
+---
+
+### Task 3: Verify LoadingIndicator is active on every fetch call
+
+**Goal:** User always sees loading feedback while waiting for data.
+
+**Current data-fetching operations:**
+
+| Operation | File | Loading wired? |
+|---|---|---|
+| Send question | `api.js` → `App.jsx` `handleSend` | Yes — `isLoading` set `true` before fetch, `false` in `finally` |
+
+**Loading behaviour (target state):**
+
+1. User sends question → `isLoading = true`
+2. `LoadingIndicator` renders inside `ChatWindow`
+3. `InputBar` input and Send button are disabled
+4. On success or error → `isLoading = false`
+
+**Files to verify:**
+
+- `client/src/App.jsx` — `isLoading` state lifecycle
+- `client/src/components/ChatWindow.jsx` — renders `LoadingIndicator` when `isLoading`
+- `client/src/components/InputBar.jsx` — respects `isLoading` disabled state
+- `client/src/components/LoadingIndicator.jsx` — animated dots visible
+
+**Acceptance criteria:**
+
+- Loading dots appear on every question send until response or error
+- Input and button are non-interactive during load
+- Loading clears in both success and error paths (`finally` block)
+
+**Status:** Done — `isLoading` lifecycle verified in `App.jsx`; `LoadingIndicator`, `InputBar`, and `ChatWindow` include `aria-busy` / `role="status"` for accessibility.
+
+---
+
+### Sprint 2 Implementation Order
+
+1. **Task 1 — Error audit** (highest user impact; unblocks confident QA)
+2. **Task 3 — Loading verification** (quick confirm; mostly complete)
+3. **Task 2 — Mobile CSS polish** (visual QA at 375px; fix any overflow found)
+
+### Sprint 2 Definition of Done
+
+- [x] All user-facing errors match the message catalog above
+- [x] UI tested at 375px with no horizontal scroll
+- [x] Loading indicator confirmed on every `sendQuestion` call
+- [x] No regression in chat answer flow or error banner dismiss behaviour
